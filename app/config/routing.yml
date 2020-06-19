@@ -1,7 +1,3 @@
-mm_samychan_frontend:
-    resource: "@MMSamyChanFrontendBundle/Resources/config/routing.yml"
-    prefix:   /
-
 mm_samychan_backend:
     resource: "@MMSamyChanBackendBundle/Resources/config/routing.yml"
-    prefix:   /backend
+    prefix:   /v1
