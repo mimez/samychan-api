@@ -26,7 +26,7 @@ class ScmFileController extends Controller
         $fieldsConfig = $config[$scmFile->getFilename()]['fields'];
 
         if ('POST' == $request->getMethod()) {
-            return $this->handleFileActionPost($request->get('channels'));
+            return $this->handleFileActionPost($request->getContent());
         }
 
         $channels = array();
@@ -61,6 +61,8 @@ class ScmFileController extends Controller
 
     protected function handleFileActionPost($channels)
     {
+        $channels = json_decode($channels, true);
+
         $em = $this->get('doctrine')->getManager();
 
         $em->getConnection()->beginTransaction();

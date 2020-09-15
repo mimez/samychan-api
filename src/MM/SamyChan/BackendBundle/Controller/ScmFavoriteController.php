@@ -27,7 +27,11 @@ class ScmFavoriteController extends Controller
             $selectData[$scmChannel->getScmChannelId()] = $scmChannel->getName();
 
             if ($scmChannel->{'getFav' . $favNo . 'sort'}() > 0) {
-                $selectedItems[] = $scmChannel->getScmChannelId();
+                $selectedItems[] = [
+                    'channelId' => $scmChannel->getScmChannelId(),
+                    'channelNo' => $scmChannel->{'getFav' . $favNo . 'sort'}(),
+                    'name' => $scmChannel->getName()
+                ];
             }
         }
 
@@ -57,23 +61,33 @@ class ScmFavoriteController extends Controller
         $scmPackage = $em->getRepository('MM\SamyChan\BackendBundle\Entity\ScmPackage')->findOneBy(array('hash' => $hash));
 
         // reset all channels of this file and fav-list
-        $field = 'c.fav' . $favNo . 'sort';
+        /*$field = 'c.fav' . $favNo . 'sort';
         foreach ($scmPackage->getFiles() as $scmFile) {
             $q = "UPDATE MM\SamyChan\BackendBundle\Entity\ScmChannel c SET {$field} = -1 WHERE {$field} > 0 AND c.scmFile = :scmFile";
             $em->createQuery($q)->setParameter('scmFile', $scmFile)->getResult();
             $em->clear();
+        }*/
+
+        $field = 'c.fav' . (int)$favNo . 'sort';
+        $sort = 1;
+        foreach ($scmPackage->getFiles() as $scmFile) {
+            $q = "SELECT MAX({$field}) + 1 FROM MM\SamyChan\BackendBundle\Entity\ScmChannel c WHERE c.scmFile = :scmFile";
+            $sort = max($sort, $em->createQuery($q)->setParameter('scmFile', $scmFile)->getSingleScalarResult());
         }
 
         // update channels with new favorit sort
-        $sort = 1;
-        $channels = $request->get('scmChannels');
+        $channels = json_decode($request->getContent(), true);
         $channels = is_array($channels) ? $channels : [];
-        
+
         foreach ($channels as $scmChannelData) {
-            $scmChannel = $em->getRepository('MM\SamyChan\BackendBundle\Entity\ScmChannel')->find($scmChannelData['scmChannelId']); // load channel
-            $scmChannel->{'setFav' . $favNo . 'sort'}($sort); // set new sort
+            $scmChannel = $em->getRepository('MM\SamyChan\BackendBundle\Entity\ScmChannel')->find($scmChannelData['channelId']); // load channel
+            if ($scmChannelData['action'] == 'add') {
+                $scmChannel->{'setFav' . $favNo . 'sort'}($sort);
+                $sort++;
+            } elseif ($scmChannelData['action'] == 'remove') {
+                $scmChannel->{'setFav' . $favNo . 'sort'}(-1);
+            }
             $em->persist($scmChannel);
-            $sort++;
         }
 
         $em->flush();

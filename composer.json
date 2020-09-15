@@ -1,8 +1,8 @@
 {
-    "name": "mimez/SamyCHAN",
+    "name": "mimez/samychan-api",
     "license": "GPLv3",
     "type": "project",
-    "description": "Channel editor for SAMSUNG televisions",
+    "description": "Backend package for Samychan",
     "autoload": {
         "psr-0": { "": "src/", "SymfonyStandard": "app/" }
     },
@@ -17,9 +17,7 @@
         "symfony/monolog-bundle": "~2.4",
         "sensio/distribution-bundle": "~3.0",
         "sensio/framework-extra-bundle": "~3.0",
-        "incenteev/composer-parameter-handler": "~2.0",
-        "zurb/foundation": "5.5.*",
-        "leafo/scssphp": "dev-master"
+        "incenteev/composer-parameter-handler": "~2.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
