@@ -81,11 +81,11 @@ class ScmFavoriteController extends Controller
 
         foreach ($channels as $scmChannelData) {
             $scmChannel = $em->getRepository('MM\SamyChan\BackendBundle\Entity\ScmChannel')->find($scmChannelData['channelId']); // load channel
-            if ($scmChannelData['action'] == 'add') {
-                $scmChannel->{'setFav' . $favNo . 'sort'}($sort);
-                $sort++;
-            } elseif ($scmChannelData['action'] == 'remove') {
+            if (isset($scmChannelData['action']) && $scmChannelData['action'] == 'remove') {
                 $scmChannel->{'setFav' . $favNo . 'sort'}(-1);
+            } else {
+                $scmChannel->{'setFav' . $favNo . 'sort'}(isset($scmChannelData['sort']) ? $scmChannelData['sort'] : $sort);
+                $sort++;
             }
             $em->persist($scmChannel);
         }

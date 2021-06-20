@@ -45,11 +45,15 @@ class ScmFileController extends Controller
 
         }
 
+        $metaData = $this->get('mm_samy_editor.scm_config')->getFileMetaDataByFilename($scmFile->getFilename());
+
         $scmFileData = array(
             'scmFileId' => $scmFile->getScmFileId(),
             'filename' => $scmFile->getFilename(),
             'fields' => $fieldsConfig,
-            'channels' => $channels
+            'channels' => $channels,
+            'label' => $metaData['label'],
+            'icon' => $metaData['icon'],
         );
 
         // json response
